@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "633294711891",
+    "project_id": "cineverse-4fe46",
+    "storage_bucket": "cineverse-4fe46.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:633294711891:android:a5aa241a6c830c9d66eaa6",
+        "android_client_info": {
+          "package_name": "com.example.cineverse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "633294711891-pku1rds3tnffpt8no1kmdt0odq0jv4q5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cineverse",
+            "certificate_hash": "cc4dcc2c7bfd352fd79ce40c20921ada47815698"
+          }
+        },
+        {
+          "client_id": "633294711891-1sni27qd5cfkkmi940p5et89rvn4fq4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbC6PZLVVo-ISDjVjbeWpLvVhu_eVp_-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "633294711891-1sni27qd5cfkkmi940p5et89rvn4fq4r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "633294711891-tltbb2nvvre2snhm0tsgl3meipajbc4m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cineverse"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
