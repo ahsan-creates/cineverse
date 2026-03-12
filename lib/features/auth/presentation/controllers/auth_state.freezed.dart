@@ -265,9 +265,8 @@ extension AuthStatePatterns on AuthState {
 
 /// @nodoc
 
-class _AuthState extends AuthState {
-  const _AuthState({this.isLoading = false, this.user, this.errorMessage})
-      : super._();
+class _AuthState implements AuthState {
+  const _AuthState({this.isLoading = false, this.user, this.errorMessage});
 
   @override
   @JsonKey()

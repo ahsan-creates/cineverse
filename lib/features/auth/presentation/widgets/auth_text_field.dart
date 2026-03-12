@@ -1,3 +1,4 @@
+import 'package:cineverse/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class AuthTextField extends StatefulWidget {
@@ -7,6 +8,8 @@ class AuthTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final IconData? prefixIcon;
   final String? Function(String?)? validator;
+  final TextInputAction textInputAction;
+  final void Function(String)? onChanged;
 
   const AuthTextField({
     super.key,
@@ -16,6 +19,8 @@ class AuthTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.prefixIcon,
     this.validator,
+    this.textInputAction = TextInputAction.next,
+    this.onChanged,
   });
 
   @override
@@ -23,39 +28,36 @@ class AuthTextField extends StatefulWidget {
 }
 
 class _AuthTextFieldState extends State<AuthTextField> {
-  bool _obscureText = true;
+  bool _obscure = true;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-
     return TextFormField(
       controller: widget.controller,
-      obscureText: widget.isPassword && _obscureText,
+      obscureText: widget.isPassword && _obscure,
       keyboardType: widget.keyboardType,
+      textInputAction: widget.textInputAction,
       validator: widget.validator,
-      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: cs.onSurface,
-          ),
-      cursorColor: cs.primary,
+      onChanged: widget.onChanged,
+      style: TextStyle(color: cs.onSurface),
       decoration: InputDecoration(
         hintText: widget.hintText,
-        hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-            ),
         prefixIcon: widget.prefixIcon != null
-            ? Icon(widget.prefixIcon, color: cs.onSurfaceVariant)
+            ? Icon(widget.prefixIcon, color: AppColors.amber600, size: 20)
             : null,
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
-                  _obscureText ? Icons.visibility_off : Icons.visibility,
-                  color: cs.onSurfaceVariant,
+                  _obscure
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: AppColors.amber600,
+                  size: 20,
                 ),
-                onPressed: () => setState(() => _obscureText = !_obscureText),
+                onPressed: () => setState(() => _obscure = !_obscure),
               )
             : null,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

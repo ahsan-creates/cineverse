@@ -27,6 +27,9 @@ mixin _$UserModel {
   $UserModelCopyWith<UserModel> get copyWith =>
       _$UserModelCopyWithImpl<UserModel>(this as UserModel, _$identity);
 
+  /// Serializes this UserModel to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -42,6 +45,7 @@ mixin _$UserModel {
                 other.isEmailVerified == isEmailVerified));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, uid, email, displayName, photoURL, isEmailVerified);
@@ -275,14 +279,16 @@ extension UserModelPatterns on UserModel {
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _UserModel implements UserModel {
   const _UserModel(
       {required this.uid,
       required this.email,
       this.displayName,
       this.photoURL,
-      required this.isEmailVerified});
+      this.isEmailVerified = false});
+  factory _UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 
   @override
   final String uid;
@@ -293,6 +299,7 @@ class _UserModel implements UserModel {
   @override
   final String? photoURL;
   @override
+  @JsonKey()
   final bool isEmailVerified;
 
   /// Create a copy of UserModel
@@ -302,6 +309,13 @@ class _UserModel implements UserModel {
   @pragma('vm:prefer-inline')
   _$UserModelCopyWith<_UserModel> get copyWith =>
       __$UserModelCopyWithImpl<_UserModel>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$UserModelToJson(
+      this,
+    );
+  }
 
   @override
   bool operator ==(Object other) {
@@ -318,6 +332,7 @@ class _UserModel implements UserModel {
                 other.isEmailVerified == isEmailVerified));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, uid, email, displayName, photoURL, isEmailVerified);

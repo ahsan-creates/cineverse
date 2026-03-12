@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user_model.freezed.dart';
+part 'user_model.g.dart';
 
 @freezed
 abstract class UserModel with _$UserModel {
@@ -10,14 +11,16 @@ abstract class UserModel with _$UserModel {
     required String email,
     String? displayName,
     String? photoURL,
-    required bool isEmailVerified,
+    @Default(false) bool isEmailVerified,
   }) = _UserModel;
 
-  // Convert Firebase User to UserModel
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
+
   factory UserModel.fromFirebaseUser(User user) {
     return UserModel(
       uid: user.uid,
-      email: user.email!,
+      email: user.email ?? '',
       displayName: user.displayName,
       photoURL: user.photoURL,
       isEmailVerified: user.emailVerified,

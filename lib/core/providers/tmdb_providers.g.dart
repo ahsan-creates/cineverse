@@ -47,4 +47,4 @@ final class TmdbDioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$tmdbDioHash() => r'86609f4b8db4ddcff8e067567a138d63d1ed3779';
+String _$tmdbDioHash() => r'4171924f6cab052114ba31379a896649e62ba966';
