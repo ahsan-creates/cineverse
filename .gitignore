@@ -49,3 +49,4 @@ app.*.map.json
 
 # Firebase config (contains API keys - regenerate via FlutterFire CLI)
 lib/firebase_options.dart
+firebase.json
