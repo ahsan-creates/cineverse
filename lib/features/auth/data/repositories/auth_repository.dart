@@ -1,132 +1,113 @@
+import 'package:cineverse/core/providers/firebase_providers.dart';
+import 'package:cineverse/features/auth/data/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../../core/providers/firebase_providers.dart';
-import '../models/user_model.dart';
 
 part 'auth_repository.g.dart';
 
 @riverpod
 class AuthRepository extends _$AuthRepository {
-  late final FirebaseAuth _auth;
-  late final GoogleSignIn _googleSignIn;
-
   @override
-  void build() {
-    _auth = ref.read(firebaseAuthProvider);
-    _googleSignIn = ref.read(googleSignInProvider);
+  UserModel? build() {
+    final firebaseUser = ref.watch(firebaseAuthProvider).currentUser;
+    return firebaseUser != null
+        ? UserModel.fromFirebaseUser(firebaseUser)
+        : null;
   }
 
-  // Get current user
   UserModel? get currentUser {
-    final user = _auth.currentUser;
-    return user != null ? UserModel.fromFirebaseUser(user) : null;
+    final firebaseUser = ref.read(firebaseAuthProvider).currentUser;
+    return firebaseUser != null
+        ? UserModel.fromFirebaseUser(firebaseUser)
+        : null;
   }
 
-  // Signup with email and password
   Future<UserModel> signUpWithEmailPassword({
     required String email,
     required String password,
+    String? displayName,
   }) async {
     try {
-      final credential = await _auth.createUserWithEmailAndPassword(
+      final auth = ref.read(firebaseAuthProvider);
+      final credential = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-
-      if (credential.user == null) {
-        throw Exception('User creation failed');
+      if (displayName != null) {
+        await credential.user?.updateDisplayName(displayName);
+        await credential.user?.reload();
       }
-
-      return UserModel.fromFirebaseUser(credential.user!);
+      return UserModel.fromFirebaseUser(auth.currentUser!);
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      throw _handleFirebaseError(e);
     }
   }
 
-  // Sign in with email and password
   Future<UserModel> signInWithEmailPassword({
     required String email,
     required String password,
   }) async {
     try {
-      final credential = await _auth.signInWithEmailAndPassword(
+      final auth = ref.read(firebaseAuthProvider);
+      await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-
-      if (credential.user == null) {
-        throw Exception('Sign in failed');
-      }
-
-      return UserModel.fromFirebaseUser(credential.user!);
+      return UserModel.fromFirebaseUser(auth.currentUser!);
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      throw _handleFirebaseError(e);
     }
   }
 
-  // sign in with google
   Future<UserModel> signInWithGoogle() async {
     try {
-      bool isSupported = _googleSignIn.supportsAuthenticate();
-
+      final googleSignIn = ref.read(googleSignInProvider);
+      bool isSupported = googleSignIn.supportsAuthenticate();
       if (!isSupported) {
         throw Exception('Google sign in is not supported on this device');
       }
-
-      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
-
-      // Obtain the auth details from the request
+      final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-
-      // Create a new credential
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
 
-      // Sign in to Firebase with the Google credential
-      final userCredential = await _auth.signInWithCredential(credential);
+      final auth = ref.read(firebaseAuthProvider);
+      final userCredential = await auth.signInWithCredential(credential);
 
+      //
       if (userCredential.user == null) {
         throw Exception('Google sign in failed');
       }
 
-      return UserModel.fromFirebaseUser(userCredential.user!);
-    } catch (e) {
-      throw Exception('Google sign in failed: $e');
+      return UserModel.fromFirebaseUser(auth.currentUser!);
+    } on FirebaseAuthException catch (e) {
+      throw _handleFirebaseError(e);
     }
   }
 
-  // Sign out
   Future<void> signOut() async {
-    await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
+    await ref.read(googleSignInProvider).signOut();
+    await ref.read(firebaseAuthProvider).signOut();
   }
 
-  // Send email verification
-  Future<void> sendEmailVerification() async {
-    final user = _auth.currentUser;
-    if (user != null && !user.emailVerified) {
-      await user.sendEmailVerification();
-    }
-  }
-
-  // Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email);
+      await ref.read(firebaseAuthProvider).sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      throw _handleFirebaseError(e);
     }
   }
 
-  // Handle Firebase Auth exceptions
-  String _handleAuthException(FirebaseAuthException e) {
+  Future<void> sendEmailVerification() async {
+    await ref.read(firebaseAuthProvider).currentUser?.sendEmailVerification();
+  }
+
+  String _handleFirebaseError(FirebaseAuthException e) {
     switch (e.code) {
-      case 'weak-password':
-        return 'The password provided is too weak.';
       case 'email-already-in-use':
-        return 'An account already exists for that email.';
+        return 'An account already exists with this email.';
       case 'invalid-email':
         return 'The email address is not valid.';
       case 'user-not-found':
@@ -137,10 +118,10 @@ class AuthRepository extends _$AuthRepository {
         return 'This user account has been disabled.';
       case 'too-many-requests':
         return 'Too many attempts. Please try again later.';
-      case 'operation-not-allowed':
-        return 'This operation is not allowed.';
+      case 'weak-password':
+        return 'The password provided is too weak.';
       default:
-        return 'An error occurred. Please try again.';
+        return 'An error occurred: ${e.message}';
     }
   }
 }

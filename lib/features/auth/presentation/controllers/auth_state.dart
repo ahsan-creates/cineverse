@@ -1,6 +1,5 @@
+import 'package:cineverse/features/auth/data/models/user_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-import '../../data/models/user_model.dart';
 
 part 'auth_state.freezed.dart';
 
@@ -11,10 +10,9 @@ abstract class AuthState with _$AuthState {
     UserModel? user,
     String? errorMessage,
   }) = _AuthState;
+}
 
-  // Helper getters
-  const AuthState._();
-
+extension AuthStateX on AuthState {
   bool get isAuthenticated => user != null;
   bool get hasError => errorMessage != null;
 }

@@ -1,24 +1,18 @@
+import 'package:cineverse/core/providers/firebase_providers.dart';
+import 'package:cineverse/features/auth/data/models/user_model.dart';
+import 'package:cineverse/features/auth/data/repositories/auth_repository.dart';
+import 'package:cineverse/features/auth/presentation/controllers/auth_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../../core/providers/firebase_providers.dart';
-import '../../data/repositories/auth_repository.dart';
-import 'auth_state.dart';
 
 part 'auth_controller.g.dart';
 
 @riverpod
 class AuthController extends _$AuthController {
-
   @override
   AuthState build() {
-    // Listen to auth state changes
     _listenToAuthChanges();
-
-    // Check initial auth state
     final authRepo = ref.read(authRepositoryProvider.notifier);
-    final currentUser = authRepo.currentUser;
-
-    return AuthState(user: currentUser);
+    return AuthState(user: authRepo.currentUser);
   }
 
   void _listenToAuthChanges() {
@@ -26,14 +20,16 @@ class AuthController extends _$AuthController {
       next.when(
         data: (user) {
           if (user != null) {
-            final authRepo = ref.read(authRepositoryProvider.notifier);
             state = state.copyWith(
-              user: authRepo.currentUser,
+              user: UserModel.fromFirebaseUser(user),
               isLoading: false,
+              errorMessage: null,
             );
+          } else {
+            state = const AuthState();
           }
         },
-        error: (error, stack) {
+        error: (error, _) {
           state = state.copyWith(
             errorMessage: error.toString(),
             isLoading: false,
@@ -46,81 +42,86 @@ class AuthController extends _$AuthController {
     });
   }
 
-  // Signup with email and password
   Future<void> signUpWithEmailPassword({
     required String email,
     required String password,
+    String? displayName,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-
     try {
       final authRepo = ref.read(authRepositoryProvider.notifier);
-      final user = await authRepo.signInWithEmailPassword(
+      final user = await authRepo.signUpWithEmailPassword(
         email: email,
         password: password,
+        displayName: displayName,
       );
-
-      // Send email verification
       await authRepo.sendEmailVerification();
-
+      if (!ref.mounted) return;
       state = state.copyWith(user: user, isLoading: false);
     } catch (e) {
+      if (!ref.mounted) return;
       state = state.copyWith(errorMessage: e.toString(), isLoading: false);
-      rethrow;
     }
   }
 
-  // Sign in with email and password
   Future<void> signInWithEmailPassword({
     required String email,
     required String password,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-
     try {
       final authRepo = ref.read(authRepositoryProvider.notifier);
       final user = await authRepo.signInWithEmailPassword(
         email: email,
         password: password,
       );
-
+      if (!ref.mounted) return;
       state = state.copyWith(user: user, isLoading: false);
     } catch (e) {
+      if (!ref.mounted) return;
       state = state.copyWith(errorMessage: e.toString(), isLoading: false);
-      rethrow;
     }
   }
 
-  // Sign in with Google
   Future<void> signInWithGoogle() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-
     try {
       final authRepo = ref.read(authRepositoryProvider.notifier);
       final user = await authRepo.signInWithGoogle();
-
+      if (!ref.mounted) return;
       state = state.copyWith(user: user, isLoading: false);
     } catch (e) {
+      if (!ref.mounted) return;
       state = state.copyWith(errorMessage: e.toString(), isLoading: false);
-      rethrow;
     }
   }
 
-  // Sign out
   Future<void> signOut() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+    state = state.copyWith(isLoading: true);
     try {
       final authRepo = ref.read(authRepositoryProvider.notifier);
       await authRepo.signOut();
-
+      if (!ref.mounted) return;
       state = const AuthState();
     } catch (e) {
+      if (!ref.mounted) return;
       state = state.copyWith(errorMessage: e.toString(), isLoading: false);
-      rethrow;
     }
   }
 
-  // Clear error
+  Future<void> sendPasswordReset(String email) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      final authRepo = ref.read(authRepositoryProvider.notifier);
+      await authRepo.sendPasswordResetEmail(email);
+      if (!ref.mounted) return;
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      if (!ref.mounted) return;
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
+    }
+  }
+
   void clearError() {
     state = state.copyWith(errorMessage: null);
   }
