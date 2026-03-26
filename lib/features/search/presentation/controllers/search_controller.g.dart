@@ -41,7 +41,7 @@ final class SearchControllerProvider
   }
 }
 
-String _$searchControllerHash() => r'e00dd599e972d12ad2693b1baa56efe5e00111c4';
+String _$searchControllerHash() => r'73357b933317604ea0d205cb039b81e6f842fd9e';
 
 abstract class _$SearchController extends $Notifier<SearchFilters> {
   SearchFilters build();
@@ -94,4 +94,4 @@ final class SearchResultsProvider extends $FunctionalProvider<
   }
 }
 
-String _$searchResultsHash() => r'365447c8933d5d04f777918a2a9d8fd9a54e436b';
+String _$searchResultsHash() => r'428c43e9310bdad724d60cfcbd82e6d16030367b';

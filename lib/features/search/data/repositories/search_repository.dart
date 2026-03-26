@@ -95,7 +95,7 @@ class SearchRepository extends _$SearchRepository {
       },
     );
     final results = res.data['results'] as List;
-    return results.map((e) {
+return results.map((e) {
       final map = e as Map<String, dynamic>;
       if (f.mediaType == 'tv') return SearchResultItem.fromTvJson(map);
       if (f.mediaType == 'movie') return SearchResultItem.fromMovieJson(map);
