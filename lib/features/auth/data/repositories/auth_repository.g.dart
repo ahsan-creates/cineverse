@@ -41,7 +41,7 @@ final class AuthRepositoryProvider
   }
 }
 
-String _$authRepositoryHash() => r'835beff78b9bbee7c01182a7d8fb8b951eafe85d';
+String _$authRepositoryHash() => r'b446e87affc62d37d4180cf7419b87f4c382ff06';
 
 abstract class _$AuthRepository extends $Notifier<UserModel?> {
   UserModel? build();

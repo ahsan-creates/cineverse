@@ -28,7 +28,8 @@ GoRouter appRouter(Ref ref) {
   final authState = ref.watch(authControllerProvider);
 
   return GoRouter(
-    initialLocation: '/home',
+    // Always start at login; redirect sends authenticated users to /home.
+    initialLocation: '/auth/login',
     redirect: (context, state) {
       final isAuthenticated = authState.isAuthenticated;
       final isAuthRoute = state.matchedLocation.startsWith('/auth');
@@ -39,11 +40,7 @@ GoRouter appRouter(Ref ref) {
     },
     routes: [
       // ── Auth ──────────────────────────────────────────────────────
-      GoRoute(
-        path: '/auth/login',
-        name: 'login',
-        builder: (_, __) => const LoginPage(),
-      ),
+      GoRoute(path: '/auth/login', name: 'login', builder: (_, __) => const LoginPage()),
       GoRoute(
         path: '/auth/signup',
         name: 'signup',
@@ -60,9 +57,8 @@ GoRouter appRouter(Ref ref) {
           GoRoute(
             path: 'movie/:id',
             name: 'movieDetail',
-            builder: (_, state) => MovieDetailPage(
-              movieId: int.parse(state.pathParameters['id']!),
-            ),
+            builder: (_, state) =>
+                MovieDetailPage(movieId: int.parse(state.pathParameters['id']!)),
             routes: [
               GoRoute(
                 path: 'book',
@@ -83,17 +79,12 @@ GoRouter appRouter(Ref ref) {
           GoRoute(
             path: 'tvshow/:id',
             name: 'tvShowDetail',
-            builder: (_, state) => TvShowDetailPage(
-              tvShowId: int.parse(state.pathParameters['id']!),
-            ),
+            builder: (_, state) =>
+                TvShowDetailPage(tvShowId: int.parse(state.pathParameters['id']!)),
           ),
 
           // Search
-          GoRoute(
-            path: 'search',
-            name: 'search',
-            builder: (_, __) => const SearchPage(),
-          ),
+          GoRoute(path: 'search', name: 'search', builder: (_, __) => const SearchPage()),
 
           // Favorites & Watchlist
           GoRoute(
@@ -141,21 +132,12 @@ GoRouter appRouter(Ref ref) {
             name: 'language',
             builder: (_, __) => const LanguagePage(),
           ),
-          GoRoute(
-            path: 'help',
-            name: 'help',
-            builder: (_, __) => const HelpPage(),
-          ),
-          GoRoute(
-            path: 'about',
-            name: 'about',
-            builder: (_, __) => const AboutPage(),
-          ),
+          GoRoute(path: 'help', name: 'help', builder: (_, __) => const HelpPage()),
+          GoRoute(path: 'about', name: 'about', builder: (_, __) => const AboutPage()),
         ],
       ),
     ],
-    errorBuilder: (_, state) => Scaffold(
-      body: Center(child: Text('Page not found: ${state.error}')),
-    ),
+    errorBuilder: (_, state) =>
+        Scaffold(body: Center(child: Text('Page not found: ${state.error}'))),
   );
 }

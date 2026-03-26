@@ -88,8 +88,16 @@ class AuthRepository extends _$AuthRepository {
   }
 
   Future<void> signOut() async {
-    await ref.read(googleSignInProvider).signOut();
-    await ref.read(firebaseAuthProvider).signOut();
+    try {
+      await ref.read(googleSignInProvider).signOut();
+    } catch (_) {
+      // Ignore so we still sign out from Firebase (e.g. user signed in with email only)
+    }
+    try {
+      await ref.read(firebaseAuthProvider).signOut();
+    } catch (_) {
+      // Ensure caller can still clear local state; Firebase may throw in edge cases
+    }
   }
 
   Future<void> sendPasswordResetEmail(String email) async {
