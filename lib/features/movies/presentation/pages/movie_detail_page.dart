@@ -100,7 +100,7 @@ class _Content extends StatelessWidget {
           pinned: true,
           backgroundColor: AppColors.scaffold(context),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: Icon(Icons.arrow_back_ios, color: AppColors.amber600),
             onPressed: () => Navigator.pop(context),
           ),
           actions: [
@@ -109,7 +109,7 @@ class _Content extends StatelessWidget {
               data: (isFav) => IconButton(
                 icon: Icon(
                   isFav ? Icons.favorite : Icons.favorite_border,
-                  color: isFav ? Colors.red : Colors.white,
+                  color: isFav ? Colors.red : AppColors.amber600,
                 ),
                 onPressed: () => ref
                     .read(favoritesControllerProvider.notifier)
@@ -123,7 +123,7 @@ class _Content extends StatelessWidget {
               data: (inWl) => IconButton(
                 icon: Icon(
                   inWl ? Icons.bookmark : Icons.bookmark_border,
-                  color: inWl ? AppColors.amber400 : Colors.white,
+                  color: inWl ? AppColors.amber400 : AppColors.amber600,
                 ),
                 onPressed: () => ref
                     .read(favoritesControllerProvider.notifier)
@@ -214,12 +214,12 @@ class _Content extends StatelessWidget {
                               CvBadge(
                                 icon: Icons.calendar_today,
                                 label: movie.year,
-                                color: AppColors.surface2(context),
+                                color: AppColors.amber400,
                               ),
                               CvBadge(
                                 icon: Icons.timer,
                                 label: movie.formattedRuntime,
-                                color: AppColors.surface2(context),
+                                color: AppColors.amber300,
                               ),
                             ],
                           ),

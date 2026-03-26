@@ -87,8 +87,8 @@ class MovieCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               movie.title,
-              style: const TextStyle(
-                color: AppColors.amber100,
+              style: TextStyle(
+                color: AppColors.textPrimary(context),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -98,8 +98,8 @@ class MovieCard extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               movie.year,
-              style: const TextStyle(
-                color: AppColors.amber300,
+              style: TextStyle(
+                color: AppColors.textSecondary(context),
                 fontSize: 11,
               ),
             ),
