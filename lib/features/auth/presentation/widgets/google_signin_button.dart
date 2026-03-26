@@ -1,5 +1,6 @@
 import 'package:cineverse/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -54,15 +55,7 @@ class _GoogleLogo extends StatelessWidget {
       width: 20,
       height: 20,
       decoration: const BoxDecoration(shape: BoxShape.circle),
-      child: const Text(
-        'G',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          color: AppColors.amber400,
-        ),
-        textAlign: TextAlign.center,
-      ),
+      child: SvgPicture.asset('assets/icons/google_logo.svg'),
     );
   }
 }

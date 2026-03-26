@@ -1,4 +1,3 @@
-import 'package:cineverse/core/router/app_router.dart';
 import 'package:cineverse/core/theme/app_theme.dart';
 import 'package:cineverse/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:cineverse/features/favorites/data/repositories/favorites_repository.dart';
@@ -58,8 +57,7 @@ class ProfilePage extends ConsumerWidget {
                       error: (_, __) => '0',
                     ),
                     icon: Icons.bookmark_outline,
-                    onTap: () => context
-                        .goNamed('favorites', extra: {'watchlist': true}),
+                    onTap: () => context.goNamed('favorites', extra: {'watchlist': true}),
                   ),
                   const SizedBox(width: 10),
                   _StatCard(
@@ -154,10 +152,10 @@ class ProfilePage extends ConsumerWidget {
               child: OutlinedButton.icon(
                 onPressed: () async {
                   final ok = await _confirmSignOut(context);
-                  if (ok) {
-                    ref.read(authControllerProvider.notifier).signOut();
-                    ref.read(appRouterProvider).go('/auth/login');
-                  }
+                  if (!ok) return;
+                  await ref.read(authControllerProvider.notifier).signOut();
+                  if (!context.mounted) return;
+                  context.go('/auth/login');
                 },
                 icon: const Icon(Icons.logout, color: AppColors.error),
                 label: const Text(
