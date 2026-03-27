@@ -62,8 +62,7 @@ lib/
 ├── core/         # Cross-cutting concerns (Theming, Providers, Env, Navigation)
 ├── features/     # Logic specific to features (Auth, Movies, TV shows, Favorites, Search)
 │   ├── data/     # Repositories, Models & Data sources
-│   ├── presentation/  # UI components & Riverpod controllers
-│   └── domain/   # Business logic & Interface definitions
+│   └── presentation/  # UI components & Riverpod controllers
 ├── shared/       # Common widgets and utilities used across features
 └── main.dart     # Entry point
 ```
